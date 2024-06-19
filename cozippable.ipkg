@@ -1,0 +1,12 @@
+package cozippable
+
+authors = "Denis Buzdalov"
+
+brief = "Cozippable interface and implementations"
+
+license = "Apache-2.0"
+
+sourcedir = "src"
+builddir = ".build"
+
+modules = Data.Cozippable

@@ -1,0 +1,5 @@
+[custom.all.cozippable]
+type = "local"
+path = "."
+ipkg = "cozippable.ipkg"
+test = "tests/tests.ipkg"
