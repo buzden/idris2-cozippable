@@ -1,7 +1,10 @@
 module Data.Cozippable
 
+import Control.Monad.Error.Interface
+
 import Data.Colist
 import Data.Colist1
+import Data.Either
 import Data.List.Lazy
 import Data.List1
 import public Data.These
@@ -193,3 +196,12 @@ Ord k => Cozippable (SortedMap k) where
     let ls = flip mapMaybe xs $ \kbc => (Builtin.fst kbc,) <$> fromThis (Builtin.snd kbc)
     let rs = flip mapMaybe xs $ \kbc => (Builtin.fst kbc,) <$> fromThat (Builtin.snd kbc)
     Both (fromList ls) (fromList rs)
+
+public export
+[MonadError] MonadError e m => Monoid e => Cozippable m where
+  cozipWith f ex ey = liftEither =<< cozipWith f <$> tryError ex <*> tryError ey
+
+  uncozipWith f ex = do
+    let left  = liftEither . maybeToEither (neutral {ty=e}) . fromThis . f =<< ex
+    let right = liftEither . maybeToEither (neutral {ty=e}) . fromThat . f =<< ex
+    Both left right
