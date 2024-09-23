@@ -14,7 +14,7 @@ import Data.Vect
 
 %default total
 
-||| The `Cozippable` interface describes how you can combine and split elements of a parameterised type, those elements may not contain equal amount of information.
+||| The `Cozippable` interface describes how you can combine and split elements of a parameterised type, those elements may contain not equal amount of information.
 |||
 ||| The easiest example is `List`. When you `zip` them using standard `Zippable` interface, only their prefixes of commit length are taken into account,
 ||| or else it is impossible to fulfill the interface.
@@ -49,6 +49,19 @@ public export
 [Compose] Cozippable f => Cozippable g => Functor g => Cozippable (f . g) where
   cozipWith f = cozipWith $ cozipWith' f
   uncozipWith f = uncozipWith $ uncozipWith f
+
+--- Particular case ---
+
+||| Cozip two cozippables taking a value from each one, and combining corresponding values if it is present in both using given function
+export %inline
+comergeWith : Cozippable z => (a -> a -> a) -> z a -> z a -> z a
+comergeWith = cozipWith . these id id
+
+public export %inline
+comerge : Semigroup a => Cozippable z => z a -> z a -> z a
+comerge = comergeWith (<+>)
+
+export infixr 6 `comerge` -- same as `cozip` above
 
 --- Particular implementations ---
 
